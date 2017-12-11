@@ -21,7 +21,6 @@ public final class ProtoStuffUtils {
     }
 
     public static <T> T deserializer(byte[] bytes, Class<T> clazz) throws SerializerException {
-
         T obj;
         try {
             obj = clazz.newInstance();

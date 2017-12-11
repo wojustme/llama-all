@@ -2,6 +2,9 @@ package com.wojustme.llama.core.util.serializer;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author xurenhe
  * @date 2017/11/29
@@ -10,13 +13,21 @@ public class SerializerTest {
 
     @Test
     public void test_protoObj() throws Exception {
-        Person person = new Person();
-        person.setName("xurenhe");
-        person.setAge(10);
-        byte[] serializer = ProtoStuffUtils.serializer(person);
+
+        Person person1 = new Person();
+        person1.setName("xurenhe");
+        person1.setAge(10);
+        Person person2 = new Person();
+        person2.setName("xu");
+        person2.setAge(5);
+        List<Person> personList = new ArrayList<>();
+        personList.add(person1);
+        personList.add(person2);
+
+        byte[] serializer = ProtoStuffUtils.serializer(personList);
         System.out.println(serializer.length);
-        Person deserializer = ProtoStuffUtils.deserializer(serializer, Person.class);
-        System.out.println(deserializer.getName());
+        List deserializer = ProtoStuffUtils.deserializer(serializer, ArrayList.class);
+        System.out.println(deserializer);
     }
 
     @Test
@@ -43,5 +54,21 @@ public class SerializerTest {
         byte[] bytes = DefaultSerializerUtils.toByteArray(person);
         Stu rsPerson = DefaultSerializerUtils.toObject(bytes, Stu.class);
         System.out.println(rsPerson);
+    }
+
+    @Test
+    public void test_serializerMsgPack() throws Exception {
+        Person person1 = new Person();
+        person1.setName("xurenhe");
+        person1.setAge(10);
+        Person person2 = new Person();
+        person2.setName("xu");
+        person2.setAge(5);
+        List<Person> personList = new ArrayList<>();
+        personList.add(person1);
+        personList.add(person2);
+        byte[] bytes = MsgPackUtils.serializer(personList);
+        List p = MsgPackUtils.deserializer(bytes, List.class);
+        System.out.println(p);
     }
 }
