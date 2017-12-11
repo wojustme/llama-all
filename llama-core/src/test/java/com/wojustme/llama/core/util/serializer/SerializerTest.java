@@ -29,4 +29,19 @@ public class SerializerTest {
         Person p = JsonUtils.toBeanObj(jsonStr, Person.class);
         System.out.println(p.getName());
     }
+
+    @Test
+    public void test_getMapFromYaml() throws Exception{
+        String path = Thread.currentThread().getContextClassLoader().getResource("hello.yaml").getPath();
+        Person person = YamlUtils.getPropsFromYamlFile(path, Person.class);
+        System.out.println(person);
+    }
+
+    @Test
+    public void test_doDefaultSerializer() throws Exception {
+        Person person = new Person();
+        byte[] bytes = DefaultSerializerUtils.toByteArray(person);
+        Stu rsPerson = DefaultSerializerUtils.toObject(bytes, Stu.class);
+        System.out.println(rsPerson);
+    }
 }
