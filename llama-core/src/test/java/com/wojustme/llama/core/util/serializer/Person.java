@@ -10,7 +10,7 @@ import java.util.Map;
 public class Person implements Serializable {
     private String name;
     private int age;
-    private Map classmates;
+    private Map<String, String> classmates;
 
     public String getName() {
         return name;
@@ -28,11 +28,11 @@ public class Person implements Serializable {
         this.age = age;
     }
 
-    public Map getClassmates() {
+    public Map<String, String> getClassmates() {
         return classmates;
     }
 
-    public void setClassmates(Map classmates) {
+    public void setClassmates(Map<String, String> classmates) {
         this.classmates = classmates;
     }
 
