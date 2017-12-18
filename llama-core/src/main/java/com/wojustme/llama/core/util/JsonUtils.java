@@ -1,7 +1,8 @@
-package com.wojustme.llama.core.util.serializer;
+package com.wojustme.llama.core.util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.wojustme.llama.core.exception.SerializerException;
 
 import java.io.UnsupportedEncodingException;
 
@@ -33,7 +34,7 @@ public final class JsonUtils {
         return pojo;
     }
 
-    public static <T> byte[] serializer(T obj) throws SerializerException {
+    public static <T> byte[] serialize(T obj) throws SerializerException {
         byte[] bytes;
         try {
             String jsonStr = toJsonStr(obj);
@@ -44,7 +45,7 @@ public final class JsonUtils {
         return bytes;
     }
 
-    public static <T> T deserializer(byte[] bytes, Class<T> clazz) throws SerializerException {
+    public static <T> T deSerialize(byte[] bytes, Class<T> clazz) throws SerializerException {
         T pojo;
         try {
             String str = new String(bytes, CHARSETNAME);

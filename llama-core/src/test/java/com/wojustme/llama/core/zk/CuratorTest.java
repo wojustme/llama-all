@@ -1,8 +1,8 @@
 package com.wojustme.llama.core.zk;
 
-import com.wojustme.llama.core.util.serializer.JsonUtils;
-import com.wojustme.llama.core.util.serializer.Person;
-import com.wojustme.llama.core.util.serializer.ProtoStuffUtils;
+import com.wojustme.llama.core.util.JsonUtils;
+import com.wojustme.llama.core.helper.serializer.Person;
+import com.wojustme.llama.core.util.ProtoStuffUtils;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -38,7 +38,7 @@ public class CuratorTest {
         Person person = new Person();
         person.setName("xurenhe");
         person.setAge(10);
-//        zkClient.create().forPath("/person", ProtoStuffUtils.serializer(person));
+//        zkClient.create().forPath("/person", ProtoStuffUtils.toByteArr(person));
         zkClient.create().withMode(CreateMode.EPHEMERAL).forPath("/person123", JsonUtils.toJsonStr(person).getBytes());
     }
 
@@ -47,7 +47,7 @@ public class CuratorTest {
         zkClient.start();
         byte[] bytes = zkClient.getData().forPath("/person");
         byte[] bytes2 = zkClient.getData().forPath("/person123");
-        Person person = ProtoStuffUtils.deserializer(bytes, Person.class);
+        Person person = ProtoStuffUtils.toBeanObj(bytes, Person.class);
         System.out.println(person);
     }
 

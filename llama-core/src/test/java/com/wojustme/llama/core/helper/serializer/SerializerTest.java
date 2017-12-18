@@ -1,5 +1,6 @@
-package com.wojustme.llama.core.util.serializer;
+package com.wojustme.llama.core.helper.serializer;
 
+import com.wojustme.llama.core.util.*;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -24,9 +25,9 @@ public class SerializerTest {
         personList.add(person1);
         personList.add(person2);
 
-        byte[] serializer = ProtoStuffUtils.serializer(personList);
+        byte[] serializer = ProtoStuffUtils.toByteArr(personList);
         System.out.println(serializer.length);
-        List deserializer = ProtoStuffUtils.deserializer(serializer, ArrayList.class);
+        List deserializer = ProtoStuffUtils.toBeanObj(serializer, ArrayList.class);
         System.out.println(deserializer);
     }
 

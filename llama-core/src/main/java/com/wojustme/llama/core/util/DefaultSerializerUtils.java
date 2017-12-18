@@ -1,6 +1,6 @@
-package com.wojustme.llama.core.util.serializer;
+package com.wojustme.llama.core.util;
 
-import com.wojustme.llama.core.util.zk.ZkException;
+import com.wojustme.llama.core.exception.SerializerException;
 
 import java.io.*;
 
@@ -28,7 +28,7 @@ public final class DefaultSerializerUtils {
             oos.close();
             bos.close();
         } catch (IOException e) {
-            throw new SerializerException("java default serializer error, maybe io error, data: " + obj, e);
+            throw new SerializerException("java default toByteArr error, maybe io error, data: " + obj, e);
         }
         return bytes;
     }
@@ -48,9 +48,9 @@ public final class DefaultSerializerUtils {
                 throw new SerializerException(obj.getClass().getName() + " can't cast to " + clazz.getName());
             }
         } catch (IOException e) {
-            throw new SerializerException("java default serializer error, IO error", e);
+            throw new SerializerException("java default toByteArr error, IO error", e);
         } catch (ClassNotFoundException e) {
-            throw new SerializerException("java default serializer error, class not found", e);
+            throw new SerializerException("java default toByteArr error, class not found", e);
         }
         return (T)obj;
     }

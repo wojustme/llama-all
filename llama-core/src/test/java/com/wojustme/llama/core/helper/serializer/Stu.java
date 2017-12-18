@@ -1,4 +1,4 @@
-package com.wojustme.llama.core.util.serializer;
+package com.wojustme.llama.core.helper.serializer;
 
 /**
  * @author xurenhe

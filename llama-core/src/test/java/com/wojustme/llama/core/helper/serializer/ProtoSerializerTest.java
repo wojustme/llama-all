@@ -1,5 +1,6 @@
-package com.wojustme.llama.core.util.serializer;
+package com.wojustme.llama.core.helper.serializer;
 
+import com.wojustme.llama.core.util.ProtoStuffUtils;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -19,8 +20,8 @@ public class ProtoSerializerTest {
         Person person = new Person();
         person.setName("xurenhe");
         person.setAge(10);
-        byte[] bytes = ProtoStuffUtils.serializer(person);
-        Person rsPerson = ProtoStuffUtils.deserializer(bytes, Person.class);
+        byte[] bytes = ProtoStuffUtils.toByteArr(person);
+        Person rsPerson = ProtoStuffUtils.toBeanObj(bytes, Person.class);
         Assert.assertEquals("xurenhe", rsPerson.getName());
     }
 
@@ -30,12 +31,15 @@ public class ProtoSerializerTest {
         person.setName("xurenhe");
         person.setAge(10);
         Map<String, String>map = new HashMap<>();
-        map.put("xiaoming", "good");
-        map.put("xiaohong", "bad");
-        person.setClassmates(map);
-        byte[] bytes = ProtoStuffUtils.serializer(person);
-        Person rsPerson = ProtoStuffUtils.deserializer(bytes, Person.class);
-        Assert.assertEquals("good", rsPerson.getClassmates().get("xiaoming"));
+        Parent mon = new Parent();
+        mon.setName("zhu");
+        mon.setAge(50);
+        List<Parent> parentList = new ArrayList<>();
+        parentList.add(mon);
+        person.setParentList(parentList);
+        byte[] bytes = ProtoStuffUtils.toByteArr(person);
+        Person rsPerson = ProtoStuffUtils.toBeanObj(bytes, Person.class);
+        System.out.println(rsPerson);
     }
 
     @Test
@@ -47,7 +51,7 @@ public class ProtoSerializerTest {
             person.setAge(i);
             personList.add(person);
         }
-        byte[] bytes = ProtoStuffUtils.serializer(personList);
+        byte[] bytes = ProtoStuffUtils.toByteArr(personList);
         System.out.println();
     }
 }

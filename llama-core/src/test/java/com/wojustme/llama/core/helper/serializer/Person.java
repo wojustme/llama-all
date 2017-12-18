@@ -1,17 +1,21 @@
-package com.wojustme.llama.core.util.serializer;
+package com.wojustme.llama.core.helper.serializer;
+
+import com.dyuproject.protostuff.Tag;
 
 import java.io.Serializable;
-import java.util.Map;
+import java.util.List;
 
 /**
  * @author xurenhe
  * @date 2017/11/29
  */
 public class Person implements Serializable {
+    @Tag(1)
     private String name;
+    @Tag(2)
     private int age;
-    private Map<String, String> classmates;
-
+    @Tag(3)
+    List<Parent> parentList;
     public String getName() {
         return name;
     }
@@ -28,12 +32,12 @@ public class Person implements Serializable {
         this.age = age;
     }
 
-    public Map<String, String> getClassmates() {
-        return classmates;
+    public List<Parent> getParentList() {
+        return parentList;
     }
 
-    public void setClassmates(Map<String, String> classmates) {
-        this.classmates = classmates;
+    public void setParentList(List<Parent> parentList) {
+        this.parentList = parentList;
     }
 
     @Override
@@ -41,7 +45,7 @@ public class Person implements Serializable {
         return "Person{" +
                 "name='" + name + '\'' +
                 ", age=" + age +
-                ", classmates=" + classmates +
+                ", parentList=" + parentList +
                 '}';
     }
 }

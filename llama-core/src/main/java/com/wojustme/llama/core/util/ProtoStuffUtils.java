@@ -1,10 +1,11 @@
-package com.wojustme.llama.core.util.serializer;
+package com.wojustme.llama.core.util;
 
 import com.dyuproject.protostuff.LinkedBuffer;
 import com.dyuproject.protostuff.ProtobufIOUtil;
 import com.dyuproject.protostuff.ProtostuffIOUtil;
 import com.dyuproject.protostuff.Schema;
 import com.dyuproject.protostuff.runtime.RuntimeSchema;
+import com.wojustme.llama.core.exception.SerializerException;
 
 /**
  * protostuff
@@ -13,18 +14,18 @@ import com.dyuproject.protostuff.runtime.RuntimeSchema;
  */
 public final class ProtoStuffUtils {
 
-    private static final int DEFAULT_BUFFER_SIZE = 256;
+    private static final int DEFAULT_BUFFER_SIZE = 1024;
 
-    public static <T> byte[] serializer(T obj) {
-        Schema schema = RuntimeSchema.getSchema(obj.getClass());
+    public static <T> byte[] toByteArr(T obj) {
+        Schema<T> schema = (Schema<T>)RuntimeSchema.getSchema(obj.getClass());
         return ProtobufIOUtil.toByteArray(obj, schema, LinkedBuffer.allocate(DEFAULT_BUFFER_SIZE));
     }
 
-    public static <T> T deserializer(byte[] bytes, Class<T> clazz) throws SerializerException {
+    public static <T> T toBeanObj(byte[] bytes, Class<T> clazz) throws SerializerException {
         T obj;
         try {
             obj = clazz.newInstance();
-            Schema schema = RuntimeSchema.getSchema(obj.getClass());
+            Schema<T> schema = (Schema<T>) RuntimeSchema.getSchema(obj.getClass());
             ProtostuffIOUtil.mergeFrom(bytes, obj, schema);
         } catch (InstantiationException e) {
             throw new SerializerException("instantiate fail, this class: " + clazz.getName() + " has no default construction method.", e);

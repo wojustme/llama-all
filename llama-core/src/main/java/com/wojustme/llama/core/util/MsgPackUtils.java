@@ -1,5 +1,6 @@
-package com.wojustme.llama.core.util.serializer;
+package com.wojustme.llama.core.util;
 
+import com.wojustme.llama.core.exception.SerializerException;
 import org.msgpack.MessagePack;
 
 import java.io.IOException;
@@ -16,7 +17,7 @@ public final class MsgPackUtils {
         try {
             bytes = MESSAGEPACK.write(obj);
         } catch (IOException e) {
-            throw new SerializerException("fail to serializer obj: " + obj + ", use msgpack", e);
+            throw new SerializerException("fail to toByteArr obj: " + obj + ", use msgpack", e);
         }
         return bytes;
     }
@@ -26,7 +27,7 @@ public final class MsgPackUtils {
         try {
             obj = MESSAGEPACK.read(bytes, clazz);
         } catch (IOException e) {
-            throw new SerializerException("fail to deserializer, use msgpack", e);
+            throw new SerializerException("fail to toBeanObj, use msgpack", e);
         }
         return obj;
     }

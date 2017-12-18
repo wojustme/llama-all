@@ -1,7 +1,8 @@
-package com.wojustme.llama.core.util.serializer;
+package com.wojustme.llama.core.util;
 
 import com.esotericsoftware.yamlbeans.YamlException;
 import com.esotericsoftware.yamlbeans.YamlReader;
+import com.wojustme.llama.core.exception.SerializerException;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -24,7 +25,7 @@ public final class YamlUtils {
         try {
             return reader.read(cls);
         } catch (YamlException e) {
-            throw new SerializerException("can not seriliaize this class type: " + cls.getName(), e);
+            throw new SerializerException("can not seriliaize this class type: " + cls.getName() + ". you should use right setM method", e);
         }
     }
 }

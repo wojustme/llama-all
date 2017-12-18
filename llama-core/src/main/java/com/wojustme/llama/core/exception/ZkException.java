@@ -1,10 +1,10 @@
-package com.wojustme.llama.core.util.zk;
+package com.wojustme.llama.core.exception;
 
 /**
  * @author xurenhe
  * @date 2017/12/3
  */
-public class ZkException extends Exception {
+public class ZkException extends RuntimeException {
 
     public ZkException() {
     }
