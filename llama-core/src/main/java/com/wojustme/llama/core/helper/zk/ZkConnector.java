@@ -3,12 +3,11 @@ package com.wojustme.llama.core.helper.zk;
 import com.wojustme.llama.core.exception.SerializerException;
 import com.wojustme.llama.core.exception.ZkException;
 import com.wojustme.llama.core.helper.serializer.*;
-import com.wojustme.llama.core.util.JsonUtils;
-import com.wojustme.llama.core.util.ProtoStuffUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.framework.recipes.cache.*;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.zookeeper.CreateMode;
 
@@ -67,30 +66,167 @@ public class ZkConnector {
         this.llamaSerializer = SerializerTypeEnum.getSerializer(zkConfig.getSerializerType());
     }
 
-    // 1. 创建节点
-    private <T> boolean createNode(String path, T data, CreateMode nodeMode, SerializerTypeEnum serilaizerKind) throws ZkException {
-        boolean rs = false;
+    /**
+     * 序列化对应的数据
+     * @param data
+     * @param <T>
+     * @return
+     * @throws SerializerException
+     */
+    private <T> byte[] prepareDataBytes(T data) throws SerializerException {
         byte[] bytes;
-        switch (serilaizerKind) {
-            case PROTO:
-                bytes = ProtoStuffUtils.toByteArr(data);
-                break;
-            case JSON:
-                String jsonStr;
-                try {
-                    jsonStr = JsonUtils.toJsonStr(data);
-                } catch (SerializerException e) {
-                    throw new ZkException("to json string error, data: " + data, e);
-                }
-                bytes = jsonStr.getBytes();
-                break;
+        if (data != null) {
+            bytes = llamaSerializer.serialize(data);
+        } else {
+            bytes = llamaSerializer.serialize(StringUtils.EMPTY);
+        }
+        return bytes;
+    }
+
+    /**
+     * 1. 创建节点
+     * @param path
+     * @param data
+     * @param nodeMode
+     * @param <T>
+     * @return
+     * @throws ZkException
+     */
+    public <T> boolean createNode(String path, T data, CreateMode nodeMode) throws ZkException {
+        boolean rs;
+        try {
+            byte[] bytes = prepareDataBytes(data);
+            start();
+            zkClient.create().withMode(nodeMode).forPath(path, bytes);
+            rs = true;
+        } catch (SerializerException e) {
+            throw new ZkException(e);
+        } catch (Exception e) {
+            throw new ZkException(e);
         }
         return rs;
     }
-    // 2. 重新设置节点数据
-    // 3. 获取节点数据
-    // 4. 删除节点数据
-    // 5. 监听该节点变动
-    // 6. 监听子节点变动
 
+    /**
+     * 2. 读取节点上数据
+     * @param path
+     * @param clazz
+     * @param <T>
+     * @return
+     * @throws ZkException
+     */
+    public <T> T readNodeData(String path, Class<T> clazz) throws ZkException {
+        T rsData;
+        start();
+        try {
+            byte[] bytes = zkClient.getData().forPath(path);
+            rsData = llamaSerializer.deserialize(bytes, clazz);
+        } catch (SerializerException e) {
+            throw new ZkException(e);
+        } catch (Exception e) {
+            throw new ZkException(e);
+        }
+        return rsData;
+    }
+
+    /**
+     * 3. 更新节点数据
+     * @param path
+     * @param data
+     * @param <T>
+     * @return
+     * @throws ZkException
+     */
+    public <T> boolean updateNodeData(String path, T data) throws ZkException {
+        boolean rs;
+        try {
+            byte[] bytes = prepareDataBytes(data);
+            start();
+            zkClient.setData().forPath(path, bytes);
+            rs = true;
+        } catch (SerializerException e) {
+            throw new ZkException(e);
+        } catch (Exception e) {
+            throw new ZkException(e);
+        }
+        return rs;
+    }
+
+    /**
+     * 4. 删除节点数据
+     * @param path
+     * @return
+     * @throws ZkException
+     */
+    public boolean deleteNodeData(String path) throws ZkException {
+        boolean rs;
+        try {
+            start();
+            zkClient.delete().forPath(path);
+            rs = true;
+        } catch (Exception e) {
+            throw new ZkException(e);
+        }
+        return rs;
+    }
+
+    /**
+     * 5. 监听该节点变动
+     * @param path
+     * @param zkEventUpdater
+     * @throws ZkException
+     */
+    public void listernNodeSelf(String path, ZkEventUpdater zkEventUpdater) throws ZkException {
+        start();
+        NodeCache nodeCache = new NodeCache(zkClient, path);
+        try {
+            nodeCache.start();
+        } catch (Exception e) {
+            throw new ZkException("listen to node error, path: " + path, e);
+        }
+        nodeCache.getListenable().addListener(() -> {
+            ChildData currentData = nodeCache.getCurrentData();
+            if (currentData == null) {
+                zkEventUpdater.doUpdate(new ZkNodeEvent(ZkNodeStatusEnum.SELF_DELETE, null));
+            } else {
+                zkEventUpdater.doUpdate(new ZkNodeEvent(ZkNodeStatusEnum.SELF_CHANGE, currentData.getData()));
+            }
+        });
+    }
+
+    /**
+     * 6. 监听子节点变动
+     * @param path
+     * @param zkEventUpdater
+     */
+    public void listernNodeChildren(String path, ZkEventUpdater zkEventUpdater) {
+        start();
+        PathChildrenCache pathChildrenCache = new PathChildrenCache(zkClient, path, true);
+        try {
+            pathChildrenCache.start();
+        } catch (Exception e) {
+            throw new ZkException("listen to node's children error, path: " + path, e);
+        }
+        pathChildrenCache.getListenable().addListener((client, event) -> {
+            ChildData childData = event.getData();
+            switch (event.getType()) {
+                case CHILD_ADDED:
+                    zkEventUpdater.doUpdate(new ZkNodeEvent(ZkNodeStatusEnum.CHILD_ADD, childData.getData()));
+                    break;
+                case CHILD_REMOVED:
+                    zkEventUpdater.doUpdate(new ZkNodeEvent(ZkNodeStatusEnum.CHILD_REMOVE, null));
+                    break;
+                case CHILD_UPDATED:
+                    zkEventUpdater.doUpdate(new ZkNodeEvent(ZkNodeStatusEnum.CHILD_UPDATE, childData.getData()));
+                    break;
+                default:
+                    zkEventUpdater.doUpdate(new ZkNodeEvent(ZkNodeStatusEnum.CHILD_UPDATE, null));
+            }
+        });
+    }
+
+
+    public LlamaSerializer getLlamaSerializer() {
+        return llamaSerializer;
+    }
 }

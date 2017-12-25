@@ -1,4 +1,4 @@
-package com.wojustme.llama.core.zk;
+package com.wojustme.llama.core.zk.single;
 
 import com.wojustme.llama.core.util.YamlUtils;
 import com.wojustme.llama.core.helper.zk.ZkConfig;

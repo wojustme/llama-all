@@ -9,7 +9,6 @@ import com.wojustme.llama.core.helper.serializer.SerializerTypeEnum;
  */
 public class ZkConfig {
 
-
     /**
      * zk的连接地址信息
      */

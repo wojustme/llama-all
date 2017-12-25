@@ -13,8 +13,8 @@ import java.io.IOException;
  * @date 2017/12/16
  */
 public class HessianUtils {
-    public static <T> byte[] toByteArr(T obj) {
-        if(obj == null) throw new NullPointerException();
+    public static <T> byte[] toByteArr(T obj) throws SerializerException {
+        if(obj == null) throw new SerializerException("hessian error, data is null");
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         HessianOutput ho = new HessianOutput(os);
         try {
