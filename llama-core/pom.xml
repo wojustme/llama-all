@@ -86,6 +86,13 @@
             <version>2.1.7</version>
         </dependency>
         <!-- rxjava end -->
+        <!-- slf4j -->
+        <dependency>
+            <groupId>slf4j</groupId>
+            <artifactId>slf4j-log4j12</artifactId>
+            <version>1.6.4</version>
+        </dependency>
+        <!-- slf4j end -->
     </dependencies>
 
     <build>
