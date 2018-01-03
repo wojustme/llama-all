@@ -3,6 +3,7 @@ package com.wojustme.llama.core.helper.zk;
 import com.wojustme.llama.core.exception.SerializerException;
 import com.wojustme.llama.core.exception.ZkException;
 import com.wojustme.llama.core.helper.serializer.*;
+import io.reactivex.Observable;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.curator.RetryPolicy;
 import org.apache.curator.framework.CuratorFramework;
@@ -10,9 +11,11 @@ import org.apache.curator.framework.CuratorFrameworkFactory;
 import org.apache.curator.framework.recipes.cache.*;
 import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.zookeeper.CreateMode;
+import org.apache.zookeeper.data.Stat;
 
 /**
  * ZK连接器，封装zkClient
+ *
  * @author xurenhe
  * @date 2017/11/29
  */
@@ -46,6 +49,7 @@ public class ZkConnector {
 
     /**
      * 初始化ZK相关信息
+     *
      * @param zkConfig
      */
     private void init(ZkConfig zkConfig) {
@@ -68,6 +72,7 @@ public class ZkConnector {
 
     /**
      * 序列化对应的数据
+     *
      * @param data
      * @param <T>
      * @return
@@ -85,6 +90,7 @@ public class ZkConnector {
 
     /**
      * 1. 创建节点
+     *
      * @param path
      * @param data
      * @param nodeMode
@@ -109,6 +115,7 @@ public class ZkConnector {
 
     /**
      * 2. 读取节点上数据
+     *
      * @param path
      * @param clazz
      * @param <T>
@@ -131,6 +138,7 @@ public class ZkConnector {
 
     /**
      * 3. 更新节点数据
+     *
      * @param path
      * @param data
      * @param <T>
@@ -154,6 +162,7 @@ public class ZkConnector {
 
     /**
      * 4. 删除节点数据
+     *
      * @param path
      * @return
      * @throws ZkException
@@ -171,12 +180,33 @@ public class ZkConnector {
     }
 
     /**
-     * 5. 监听该节点变动
+     * 5. 判断某个路径是佛存在
+     *
+     * @param path
+     * @return
+     */
+    public boolean checkZkNodeIsExist(String path) {
+        boolean rs = false;
+        try {
+            start();
+            Stat stat = zkClient.checkExists().forPath(path);
+            if (stat != null) {
+                rs = true;
+            }
+        } catch (Exception e) {
+            throw new ZkException(e);
+        }
+        return rs;
+    }
+
+    /**
+     * 6. 监听该节点变动(事件通知器模式)
+     *
      * @param path
      * @param zkEventUpdater
      * @throws ZkException
      */
-    public void listernNodeSelf(String path, ZkEventUpdater zkEventUpdater) throws ZkException {
+    public void listernOnSelfNodeWithDefault(String path, ZkEventUpdater zkEventUpdater) throws ZkException {
         start();
         NodeCache nodeCache = new NodeCache(zkClient, path);
         try {
@@ -195,11 +225,40 @@ public class ZkConnector {
     }
 
     /**
-     * 6. 监听子节点变动
+     * 6. 监听该节点变动(rx接口模式)
+     *
+     * @param path
+     * @return
+     * @throws ZkException
+     */
+    public Observable<ZkNodeEvent> listernOnSelfNodeWithRx(String path) throws ZkException {
+
+        start();
+        NodeCache nodeCache = new NodeCache(zkClient, path);
+        try {
+            nodeCache.start();
+        } catch (Exception e) {
+            throw new ZkException("listen to node error, path: " + path, e);
+        }
+        return Observable.create(observableEmitter -> nodeCache.getListenable().addListener(() -> {
+            ChildData currentData = nodeCache.getCurrentData();
+            ZkNodeEvent zkNodeEvent;
+            if (currentData == null) {
+                zkNodeEvent = new ZkNodeEvent(ZkNodeStatusEnum.SELF_DELETE, null);
+            } else {
+                zkNodeEvent = new ZkNodeEvent(ZkNodeStatusEnum.SELF_CHANGE, currentData.getData());
+            }
+            observableEmitter.onNext(zkNodeEvent);
+        }));
+    }
+
+    /**
+     * 7. 监听子节点变动(事件通知器模式)
+     *
      * @param path
      * @param zkEventUpdater
      */
-    public void listernNodeChildren(String path, ZkEventUpdater zkEventUpdater) {
+    public void listernOnNodeChildrenWithDefault(String path, ZkEventUpdater zkEventUpdater) {
         start();
         PathChildrenCache pathChildrenCache = new PathChildrenCache(zkClient, path, true);
         try {
@@ -225,6 +284,39 @@ public class ZkConnector {
         });
     }
 
+    /**
+     * 7. 监听子节点变动(rx接口模式)
+     *
+     * @param path
+     */
+    public Observable<ZkNodeEvent> listernOnNodeChildrenWithRx(String path) {
+        start();
+        PathChildrenCache pathChildrenCache = new PathChildrenCache(zkClient, path, true);
+        try {
+            pathChildrenCache.start();
+        } catch (Exception e) {
+            throw new ZkException("listen to node's children error, path: " + path, e);
+        }
+        return Observable.create(observableEmitter -> pathChildrenCache.getListenable().addListener((client, event) -> {
+            ChildData childData = event.getData();
+            ZkNodeEvent zkNodeEvent;
+            switch (event.getType()) {
+                case CHILD_ADDED:
+                    zkNodeEvent = new ZkNodeEvent(ZkNodeStatusEnum.CHILD_ADD, childData.getData());
+                    break;
+                case CHILD_REMOVED:
+                    zkNodeEvent = new ZkNodeEvent(ZkNodeStatusEnum.CHILD_REMOVE, null);
+                    break;
+                case CHILD_UPDATED:
+                    zkNodeEvent = new ZkNodeEvent(ZkNodeStatusEnum.CHILD_UPDATE, childData.getData());
+                    break;
+                default:
+                    zkNodeEvent = new ZkNodeEvent(ZkNodeStatusEnum.CHILD_UPDATE, null);
+            }
+            observableEmitter.onNext(zkNodeEvent);
+        }));
+
+    }
 
     public LlamaSerializer getLlamaSerializer() {
         return llamaSerializer;

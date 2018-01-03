@@ -36,7 +36,6 @@ public class ProtoSerializerTest {
         mon.setAge(50);
         List<Parent> parentList = new ArrayList<>();
         parentList.add(mon);
-        person.setParentList(parentList);
         byte[] bytes = ProtoStuffUtils.toByteArr(person);
         Person rsPerson = ProtoStuffUtils.toBeanObj(bytes, Person.class);
         System.out.println(rsPerson);

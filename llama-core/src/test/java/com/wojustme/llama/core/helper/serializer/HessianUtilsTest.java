@@ -24,7 +24,6 @@ public class HessianUtilsTest {
         mon.setAge(50);
         List<Parent> parentList = new ArrayList<>();
         parentList.add(mon);
-        person.setParentList(parentList);
         byte[] bytes = HessianUtils.toByteArr(person);
         Person rsPerson = HessianUtils.toBeanObj(bytes, Person.class);
         System.out.println(rsPerson);

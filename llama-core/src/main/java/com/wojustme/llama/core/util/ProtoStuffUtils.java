@@ -7,12 +7,14 @@ import com.dyuproject.protostuff.Schema;
 import com.dyuproject.protostuff.runtime.RuntimeSchema;
 import com.wojustme.llama.core.exception.SerializerException;
 
+import java.io.Serializable;
+
 /**
  * protostuff
  * @author xurenhe
  * @date 2017/11/29
  */
-public final class ProtoStuffUtils {
+public final class ProtoStuffUtils implements Serializable{
 
     private static final int DEFAULT_BUFFER_SIZE = 1024;
 

@@ -4,7 +4,6 @@ import com.wojustme.llama.core.exception.SerializerException;
 import com.wojustme.llama.core.helper.serializer.LlamaSerializer;
 import com.wojustme.llama.core.helper.zk.*;
 import com.wojustme.llama.core.util.YamlUtils;
-import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import org.apache.zookeeper.CreateMode;
@@ -37,7 +36,7 @@ public class LlamaZkTest {
 
     @Test
     public void test_createZkNode() throws Exception {
-        zkConnector.createNode("/hello/123", "hello", CreateMode.PERSISTENT);
+        zkConnector.createNode("/hello", "hello", CreateMode.PERSISTENT);
     }
 
 
@@ -49,8 +48,7 @@ public class LlamaZkTest {
 
     @Test
     public void test_updateZkNodeData() throws Exception {
-        zkConnector.updateNodeData("/hello", "xurenhe");
-        zkConnector.deleteNodeData("/hello");
+        zkConnector.updateNodeData("/hello", "xurenhe312321");
     }
 
     @Test
@@ -61,8 +59,8 @@ public class LlamaZkTest {
             System.out.println(zkNodeEvent.getZkNodeStatusEnum());
             printData(llamaSerializer, zkNodeEvent);
         };
-        zkConnector.listernNodeSelf(path, zkEventUpdater);
-        Thread.sleep(60 * 1000);
+        zkConnector.listernOnSelfNodeWithDefault(path, zkEventUpdater);
+        Thread.sleep(120 * 1000);
     }
 
 
@@ -75,7 +73,7 @@ public class LlamaZkTest {
             printData(llamaSerializer, zkNodeEvent);
         };
 
-        zkConnector.listernNodeChildren(path, zkEventUpdater);
+        zkConnector.listernOnNodeChildrenWithDefault(path, zkEventUpdater);
         Thread.sleep(60 * 1000);
     }
 
@@ -88,5 +86,36 @@ public class LlamaZkTest {
                 e.printStackTrace();
             }
         }
+    }
+
+
+
+    @Test
+    public void test_WatchSelfNode2() throws Exception {
+        LlamaSerializer llamaSerializer = zkConnector.getLlamaSerializer();
+        String path = "/hello";
+        zkConnector.listernOnSelfNodeWithRx(path).subscribe(new Observer<ZkNodeEvent>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(ZkNodeEvent zkNodeEvent) {
+                System.out.println(zkNodeEvent.getZkNodeStatusEnum());
+                printData(llamaSerializer, zkNodeEvent);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
+        Thread.sleep(120 * 1000);
     }
 }

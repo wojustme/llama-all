@@ -23,6 +23,7 @@ public class RxJavaTest {
             }
         });
 
+
         hello.subscribe(new Observer<String>() {
 
             private Disposable disposable;

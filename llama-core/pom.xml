@@ -93,6 +93,13 @@
             <version>1.6.4</version>
         </dependency>
         <!-- slf4j end -->
+        <!-- eventbus -->
+        <dependency>
+            <groupId>org.greenrobot</groupId>
+            <artifactId>eventbus</artifactId>
+            <version>3.1.1</version>
+        </dependency>
+        <!-- eventbus end -->
     </dependencies>
 
     <build>
