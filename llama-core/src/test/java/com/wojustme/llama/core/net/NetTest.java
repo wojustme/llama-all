@@ -9,7 +9,7 @@ import com.wojustme.llama.core.helper.net.msg.MsgCoder;
 import com.wojustme.llama.core.helper.net.msg.MsgType;
 import com.wojustme.llama.core.helper.net.MsgClient;
 import com.wojustme.llama.core.helper.net.MsgServer;
-import com.wojustme.llama.core.helper.net.bean.NetAddress;
+import com.wojustme.llama.core.bean.NetAddress;
 import com.wojustme.llama.core.helper.serializer.HessianSerializer;
 import com.wojustme.llama.core.helper.serializer.LlamaSerializer;
 import io.netty.channel.ChannelHandlerContext;

@@ -1,0 +1,13 @@
+/llama
+  /nodes
+    /coordinator
+    /workers
+      /worker-01
+  /topologies
+    /topology-01
+      /spouts
+      /bolts
+  /assignments
+    /worker-01
+      /tasks
+  /error

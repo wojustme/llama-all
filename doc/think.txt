@@ -1,0 +1,18 @@
+应用操作
+一、coordinator进程启动
+  1. 创建nodes永久节点，存在跳过
+  2. 创建coordinator临时节点，写入状态信息
+  3. 创建workers永久节点，存在跳过
+  4. 创建topologies永久节点，存在跳过
+  5. 创建assignments永久节点，存在跳过
+  6. 创建HTTP服务器，用于topology的jar包提交
+
+二、worker进程启动
+  1. 在workers下注册一个worker
+
+用户操作
+1. 提交任务
+2. 删除任务
+
+系统自发
+1. 节点容错

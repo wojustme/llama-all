@@ -1,4 +1,4 @@
-package com.wojustme.llama.core.helper.net.bean;
+package com.wojustme.llama.core.bean;
 
 import com.google.common.base.Objects;
 

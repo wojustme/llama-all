@@ -315,8 +315,19 @@ public class ZkConnector {
             }
             observableEmitter.onNext(zkNodeEvent);
         }));
-
     }
+
+    public <T> boolean createNode(String path, T data, CreateMode nodeMode, boolean isAllowExit) throws ZkException {
+        if (checkZkNodeIsExist(path)) {
+            if (isAllowExit) {
+                return true;
+            }
+            throw new ZkException(path + " node exist.");
+        } else {
+            return createNode(path, data, nodeMode);
+        }
+    }
+
 
     public LlamaSerializer getLlamaSerializer() {
         return llamaSerializer;
