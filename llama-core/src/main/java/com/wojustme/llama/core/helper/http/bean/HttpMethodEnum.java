@@ -1,4 +1,4 @@
-package com.wojustme.llama.core.helper.http;
+package com.wojustme.llama.core.helper.http.bean;
 
 import io.netty.handler.codec.http.HttpMethod;
 

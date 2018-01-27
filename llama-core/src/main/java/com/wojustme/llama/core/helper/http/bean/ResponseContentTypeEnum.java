@@ -1,10 +1,10 @@
-package com.wojustme.llama.core.helper.http;
+package com.wojustme.llama.core.helper.http.bean;
 
 /**
  * @author xurenhe
  * @date 2018/1/16
  */
-public enum ResContentType {
+public enum ResponseContentTypeEnum {
     TEXT("text/plain"),
     HTML("text/html"),
     XHTML("application/xhtml+xml"),
@@ -13,7 +13,7 @@ public enum ResContentType {
 
     public String value;
 
-    ResContentType(String value) {
+    ResponseContentTypeEnum(String value) {
         this.value = value;
     }
 }
