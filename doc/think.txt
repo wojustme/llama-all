@@ -16,3 +16,11 @@
 
 系统自发
 1. 节点容错
+
+
+提交任务命令
+./llama-submit \
+--class com.wojustme.llama.test.WordCount \
+--master 127.0.0.1:9527 \
+--tolology wordcount \
+--jar wc.jar

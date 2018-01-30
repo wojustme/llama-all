@@ -1,6 +1,7 @@
 package com.wojustme.llama.core.coordinator;
 
 import com.wojustme.llama.core.constants.ZkPathConstant;
+import com.wojustme.llama.core.helper.http.HttpConnectServer;
 import com.wojustme.llama.core.helper.zk.ZkConnector;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.zookeeper.CreateMode;
@@ -17,9 +18,21 @@ public class Coordinator {
      */
     private ZkConnector zkConnector;
 
+    /**
+     * 需要上报zk，协调者的状态
+     */
     private CoordinatorStatus coordinatorStatus;
+    /**
+     * 协调者的配置信息
+     */
+    private CoordinatorConfig coordinatorConfig;
 
-    public Coordinator() {
+    public Coordinator(CoordinatorConfig coordinatorConfig) {
+        this.coordinatorConfig = coordinatorConfig;
+    }
+
+    public void start() {
+        // todo xurenhe 未做校验
         init();
     }
 
@@ -62,9 +75,23 @@ public class Coordinator {
     }
 
     private void createTopologyHttpServer() {
+        int httpServerPort = coordinatorConfig.getHttpServerPort();
+        HttpConnectServer httpConnectServer = new HttpConnectServer(httpServerPort);
+        new Thread(httpConnectServer).start();
     }
 
     public ZkConnector getZkConnector() {
         return zkConnector;
+    }
+
+
+    public static void main(String[] args) {
+        CoordinatorConfig coordinatorConfig = new CoordinatorConfig();
+        coordinatorConfig.setHttpServerPort(10001);
+
+
+
+        Coordinator coordinator = new Coordinator(coordinatorConfig);
+        coordinator.start();
     }
 }

@@ -17,9 +17,19 @@ import io.netty.handler.stream.ChunkedWriteHandler;
  * @author xurenhe
  * @date 2018/1/27
  */
-public class HttpConnectServer {
+public class HttpConnectServer implements Runnable {
 
-    public void start(int port) {
+    private final int port;
+    public HttpConnectServer(int port) {
+        this.port = port;
+    }
+
+    @Override
+    public void run() {
+        start();
+    }
+
+    public void start() {
         EventLoopGroup boosGroup = new NioEventLoopGroup();
         EventLoopGroup workGroup = new NioEventLoopGroup();
 
@@ -46,6 +56,6 @@ public class HttpConnectServer {
 
 
     public static void main(String[] args) {
-        new HttpConnectServer().start(9527);
+        new HttpConnectServer(9527).start();
     }
 }
