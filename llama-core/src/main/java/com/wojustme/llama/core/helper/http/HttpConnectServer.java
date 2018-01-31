@@ -1,5 +1,6 @@
 package com.wojustme.llama.core.helper.http;
 
+import com.wojustme.llama.core.coordinator.CoordinatorConfig;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -19,9 +20,9 @@ import io.netty.handler.stream.ChunkedWriteHandler;
  */
 public class HttpConnectServer implements Runnable {
 
-    private final int port;
-    public HttpConnectServer(int port) {
-        this.port = port;
+    private final CoordinatorConfig coordinatorConfig;
+    public HttpConnectServer(CoordinatorConfig coordinatorConfig) {
+        this.coordinatorConfig = coordinatorConfig;
     }
 
     @Override
@@ -30,6 +31,8 @@ public class HttpConnectServer implements Runnable {
     }
 
     public void start() {
+
+        int port = coordinatorConfig.getHttpServerPort();
         EventLoopGroup boosGroup = new NioEventLoopGroup();
         EventLoopGroup workGroup = new NioEventLoopGroup();
 
@@ -44,7 +47,7 @@ public class HttpConnectServer implements Runnable {
                             pipeline.addLast(new HttpRequestDecoder());
                             pipeline.addLast(new HttpResponseEncoder());
                             pipeline.addLast(new ChunkedWriteHandler());
-                            pipeline.addLast(new HttpConnectHandler());
+                            pipeline.addLast(new HttpConnectHandler(coordinatorConfig));
                         }
                     });
             ChannelFuture sync = serverBootstrap.bind(port).sync();
@@ -54,8 +57,4 @@ public class HttpConnectServer implements Runnable {
         }
     }
 
-
-    public static void main(String[] args) {
-        new HttpConnectServer(9527).start();
-    }
 }

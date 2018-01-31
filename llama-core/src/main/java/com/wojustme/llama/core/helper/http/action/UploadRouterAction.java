@@ -1,5 +1,6 @@
 package com.wojustme.llama.core.helper.http.action;
 
+import com.wojustme.llama.core.coordinator.CoordinatorConfig;
 import com.wojustme.llama.core.helper.http.HttpUtils;
 import com.wojustme.llama.core.helper.http.bean.ResponseContentTypeEnum;
 import io.netty.channel.ChannelHandlerContext;
@@ -11,6 +12,8 @@ import io.netty.handler.codec.http.multipart.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 
 /**
@@ -32,10 +35,15 @@ public class UploadRouterAction extends RouterAction {
 
     private HttpPostRequestDecoder postDecoder;
 
+    private CoordinatorConfig coordinatorConfig;
 
-    public UploadRouterAction(HttpRequest httpRequest) {
+    private Map<String, String> uploadMsg;
+
+    public UploadRouterAction(CoordinatorConfig coordinatorConfig, HttpRequest httpRequest) {
+        this.coordinatorConfig = coordinatorConfig;
         this.httpRequest = httpRequest;
         this.postDecoder = new HttpPostRequestDecoder(FACTORY, httpRequest);
+        this.uploadMsg = new HashMap<>();
     }
 
     @Override
@@ -84,14 +92,14 @@ public class UploadRouterAction extends RouterAction {
 
         if (data.getHttpDataType() == InterfaceHttpData.HttpDataType.Attribute) {
             Attribute attribute = (Attribute) data;
-            System.out.println("attribute: " + attribute.getName() + " -> " + attribute.getValue());
+            uploadMsg.put(attribute.getName(), attribute.getValue());
         }
 
         if (data.getHttpDataType() == InterfaceHttpData.HttpDataType.FileUpload) {
             FileUpload fileUpload = (FileUpload) data;
             if (fileUpload.isCompleted()) {
                 String fileName = fileUpload.getFilename();
-                File dest = new File("/Users/xurenhe/datas/MyCodes/MyGitHub/llama-all", fileName);
+                File dest = new File(coordinatorConfig.getUploadFileSavePath(), fileName);
                 fileUpload.renameTo(dest);
                 postDecoder.removeHttpDataFromClean(fileUpload);
             }

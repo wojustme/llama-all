@@ -1,5 +1,6 @@
 package com.wojustme.llama.core.helper.http;
 
+import com.wojustme.llama.core.coordinator.CoordinatorConfig;
 import com.wojustme.llama.core.helper.http.action.ErrorRouterAction;
 import com.wojustme.llama.core.helper.http.action.RouterAction;
 import com.wojustme.llama.core.helper.http.action.UploadRouterAction;
@@ -20,6 +21,11 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  */
 public class HttpConnectHandler extends SimpleChannelInboundHandler<HttpObject> {
 
+    private final CoordinatorConfig coordinatorConfig;
+
+    public HttpConnectHandler(CoordinatorConfig coordinatorConfig) {
+        this.coordinatorConfig = coordinatorConfig;
+    }
 
     /**
      * 路由控制器
@@ -56,7 +62,7 @@ public class HttpConnectHandler extends SimpleChannelInboundHandler<HttpObject> 
             this.routerAction = new ErrorRouterAction();
         }
         if (uri.startsWith("/upload")) {
-            this.routerAction = new UploadRouterAction(httpRequest);
+            this.routerAction = new UploadRouterAction(coordinatorConfig, httpRequest);
             return;
         }
         this.routerAction = new ErrorRouterAction();

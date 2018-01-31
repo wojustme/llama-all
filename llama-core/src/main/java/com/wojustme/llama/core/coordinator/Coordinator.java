@@ -76,7 +76,7 @@ public class Coordinator {
 
     private void createTopologyHttpServer() {
         int httpServerPort = coordinatorConfig.getHttpServerPort();
-        HttpConnectServer httpConnectServer = new HttpConnectServer(httpServerPort);
+        HttpConnectServer httpConnectServer = new HttpConnectServer(coordinatorConfig);
         new Thread(httpConnectServer).start();
     }
 
@@ -88,7 +88,7 @@ public class Coordinator {
     public static void main(String[] args) {
         CoordinatorConfig coordinatorConfig = new CoordinatorConfig();
         coordinatorConfig.setHttpServerPort(10001);
-
+        coordinatorConfig.setUploadFileSavePath("./");
 
 
         Coordinator coordinator = new Coordinator(coordinatorConfig);
