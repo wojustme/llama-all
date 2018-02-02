@@ -9,22 +9,22 @@ public class ZkPathConstant {
     /**
      * 所有节点
      */
-    public final static String NODES_PATH = "nodes";
+    public final static String NODES_PATH = "/nodes";
     /**
      * 管理节点
      */
-    public final static String COORDINATOR_PATH = "coordinator";
+    public final static String COORDINATOR_PATH = "/coordinator";
     /**
      * 工作集合
      */
-    public final static String WORKERS_PATH = "workers";
+    public final static String WORKERS_PATH = "/workers";
     /**
      * 任务集合
      */
-    public final static String TOPOLOGIES_PATH = "topologies";
+    public final static String TOPOLOGIES_PATH = "/topologies";
     /**
      * 安排
      */
-    public final static String ASSIGNMENTS_PATH = "assignments";
+    public final static String ASSIGNMENTS_PATH = "/assignments";
 
 }

@@ -1,6 +1,7 @@
 package com.wojustme.llama.core.helper.http;
 
 import com.wojustme.llama.core.coordinator.CoordinatorConfig;
+import com.wojustme.llama.core.helper.http.action.ApiRouterAction;
 import com.wojustme.llama.core.helper.http.action.ErrorRouterAction;
 import com.wojustme.llama.core.helper.http.action.RouterAction;
 import com.wojustme.llama.core.helper.http.action.UploadRouterAction;
@@ -61,8 +62,12 @@ public class HttpConnectHandler extends SimpleChannelInboundHandler<HttpObject> 
         if (StringUtils.isEmpty(uri)) {
             this.routerAction = new ErrorRouterAction();
         }
-        if (uri.startsWith("/upload")) {
+        if (uri.equalsIgnoreCase("/upload")) {
             this.routerAction = new UploadRouterAction(coordinatorConfig, httpRequest);
+            return;
+        }
+        if (uri.toLowerCase().startsWith("/api")) {
+            this.routerAction = new ApiRouterAction(coordinatorConfig,httpRequest);
             return;
         }
         this.routerAction = new ErrorRouterAction();

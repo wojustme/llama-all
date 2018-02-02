@@ -1,5 +1,7 @@
 package com.wojustme.llama.core.coordinator;
 
+import com.wojustme.llama.core.helper.zk.ZkConfig;
+
 /**
  * @author xurenhe
  * @date 2018/1/30
@@ -16,6 +18,16 @@ public class CoordinatorConfig {
      */
     private String uploadFileSavePath;
 
+    /**
+     * zk相关配置信息
+     */
+    private ZkConfig zkConfig;
+
+    /**
+     * 事件统一处理器
+     */
+    private CoordinatorEventHandler coordinatorEventHandler;
+
     public int getHttpServerPort() {
         return httpServerPort;
     }
@@ -30,5 +42,21 @@ public class CoordinatorConfig {
 
     public void setUploadFileSavePath(String uploadFileSavePath) {
         this.uploadFileSavePath = uploadFileSavePath;
+    }
+
+    public ZkConfig getZkConfig() {
+        return zkConfig;
+    }
+
+    public void setZkConfig(ZkConfig zkConfig) {
+        this.zkConfig = zkConfig;
+    }
+
+    public CoordinatorEventHandler getCoordinatorEventHandler() {
+        return coordinatorEventHandler;
+    }
+
+    public void setCoordinatorEventHandler(CoordinatorEventHandler coordinatorEventHandler) {
+        this.coordinatorEventHandler = coordinatorEventHandler;
     }
 }

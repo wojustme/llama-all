@@ -1,0 +1,7 @@
+zkConnectAddr: localhost:2181
+baseNameSpace: llama
+sessionTimeoutMs: 1000
+connectionTimeoutMs: 1000
+retrySleepTimeMs: 1000
+retryNum: 1
+serializerType: HESSIAN

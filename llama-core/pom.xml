@@ -94,10 +94,11 @@
         <!-- rxjava end -->
         <!-- slf4j -->
         <dependency>
-            <groupId>slf4j</groupId>
+            <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.6.4</version>
+            <version>1.7.25</version>
         </dependency>
+
         <!-- slf4j end -->
         <!-- eventbus -->
         <dependency>

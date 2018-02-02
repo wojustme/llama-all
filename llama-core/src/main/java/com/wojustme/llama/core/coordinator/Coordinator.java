@@ -1,8 +1,11 @@
 package com.wojustme.llama.core.coordinator;
 
 import com.wojustme.llama.core.constants.ZkPathConstant;
+import com.wojustme.llama.core.exception.SerializerException;
 import com.wojustme.llama.core.helper.http.HttpConnectServer;
+import com.wojustme.llama.core.helper.zk.ZkConfig;
 import com.wojustme.llama.core.helper.zk.ZkConnector;
+import com.wojustme.llama.core.util.YamlUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.zookeeper.CreateMode;
 
@@ -13,6 +16,7 @@ import org.apache.zookeeper.CreateMode;
  * @date 2017/12/29
  */
 public class Coordinator {
+
     /**
      * 维护zk连接器
      */
@@ -22,6 +26,7 @@ public class Coordinator {
      * 需要上报zk，协调者的状态
      */
     private CoordinatorStatus coordinatorStatus;
+
     /**
      * 协调者的配置信息
      */
@@ -29,6 +34,7 @@ public class Coordinator {
 
     public Coordinator(CoordinatorConfig coordinatorConfig) {
         this.coordinatorConfig = coordinatorConfig;
+        this.zkConnector = new ZkConnector(coordinatorConfig.getZkConfig());
     }
 
     public void start() {
@@ -40,6 +46,7 @@ public class Coordinator {
      * coordinator进程启动
      */
     private void init() {
+        coordinatorConfig.setCoordinatorEventHandler(new CoordinatorEventHandler());
         // 1. 创建nodes永久节点，存在跳过
         createPathNodes();
         // 2. 创建coordinator临时节点, 并写入数据
@@ -75,7 +82,6 @@ public class Coordinator {
     }
 
     private void createTopologyHttpServer() {
-        int httpServerPort = coordinatorConfig.getHttpServerPort();
         HttpConnectServer httpConnectServer = new HttpConnectServer(coordinatorConfig);
         new Thread(httpConnectServer).start();
     }
@@ -85,10 +91,14 @@ public class Coordinator {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SerializerException {
+        String path = Thread.currentThread().getContextClassLoader().getResource("zkconfig.yaml").getPath();
+        ZkConfig zkConfig = YamlUtils.getPropsFromYamlFile(path, ZkConfig.class);
+
         CoordinatorConfig coordinatorConfig = new CoordinatorConfig();
         coordinatorConfig.setHttpServerPort(10001);
         coordinatorConfig.setUploadFileSavePath("./");
+        coordinatorConfig.setZkConfig(zkConfig);
 
 
         Coordinator coordinator = new Coordinator(coordinatorConfig);

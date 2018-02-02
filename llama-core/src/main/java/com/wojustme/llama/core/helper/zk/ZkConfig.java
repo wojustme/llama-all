@@ -20,7 +20,7 @@ public class ZkConfig {
     /**
      * 会话超时设置
      */
-    private int sessionTimeoutMs = -10;
+    private int sessionTimeoutMs;
     /**
      * 连接超时参数
      */

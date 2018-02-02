@@ -1,6 +1,7 @@
 package com.wojustme.llama.core.helper.http;
 
 import com.wojustme.llama.core.coordinator.CoordinatorConfig;
+import com.wojustme.llama.core.coordinator.CoordinatorEventHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -21,6 +22,8 @@ import io.netty.handler.stream.ChunkedWriteHandler;
 public class HttpConnectServer implements Runnable {
 
     private final CoordinatorConfig coordinatorConfig;
+
+
     public HttpConnectServer(CoordinatorConfig coordinatorConfig) {
         this.coordinatorConfig = coordinatorConfig;
     }
