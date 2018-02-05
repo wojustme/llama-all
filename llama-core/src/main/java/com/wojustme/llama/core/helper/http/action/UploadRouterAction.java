@@ -1,6 +1,6 @@
 package com.wojustme.llama.core.helper.http.action;
 
-import com.wojustme.llama.core.coordinator.CoordinatorConfig;
+import com.wojustme.llama.core.coordinator.*;
 import com.wojustme.llama.core.helper.http.HttpUtils;
 import com.wojustme.llama.core.helper.http.bean.ResponseContentTypeEnum;
 import io.netty.channel.ChannelHandlerContext;
@@ -9,6 +9,7 @@ import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpRequest;
 import io.netty.handler.codec.http.LastHttpContent;
 import io.netty.handler.codec.http.multipart.*;
+import org.greenrobot.eventbus.EventBus;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,12 +36,12 @@ public class UploadRouterAction extends RouterAction {
 
     private HttpPostRequestDecoder postDecoder;
 
-    private CoordinatorConfig coordinatorConfig;
+    private CoordinatorData coordinatorData;
 
     private Map<String, String> uploadMsg;
 
-    public UploadRouterAction(CoordinatorConfig coordinatorConfig, HttpRequest httpRequest) {
-        this.coordinatorConfig = coordinatorConfig;
+    public UploadRouterAction(CoordinatorData coordinatorData, HttpRequest httpRequest) {
+        this.coordinatorData = coordinatorData;
         this.httpRequest = httpRequest;
         this.postDecoder = new HttpPostRequestDecoder(FACTORY, httpRequest);
         this.uploadMsg = new HashMap<>();
@@ -99,11 +100,30 @@ public class UploadRouterAction extends RouterAction {
             FileUpload fileUpload = (FileUpload) data;
             if (fileUpload.isCompleted()) {
                 String fileName = fileUpload.getFilename();
-                File dest = new File(coordinatorConfig.getUploadFileSavePath(), fileName);
+                File dest = new File(coordinatorData.getCoordinatorConfig().getUploadFileSavePath(), fileName);
                 fileUpload.renameTo(dest);
                 postDecoder.removeHttpDataFromClean(fileUpload);
+                uploadMsg.put("jarFileName", fileName);
+                EventBus.getDefault().post(new CoordinatorEventData(CoordinatorEvent.SUMBIT_TOPOLOGY, buildUploadTopologyEventData()));
             }
 
         }
+    }
+
+    private Map<String, String> buildUploadTopologyEventData() {
+        Map<String, String> uploadEventData = new HashMap<>();
+        // 运行主类
+        String mainCls = uploadMsg.get("class");
+        // topology名
+        String topologyName = uploadMsg.get("topology");
+        // jar文件包名
+        String jarFileName = uploadMsg.get("jarFileName");
+
+        uploadEventData.put("mainClass", mainCls);
+        uploadEventData.put("topologyName", topologyName);
+        uploadEventData.put("jarFileName", jarFileName);
+
+        return uploadEventData;
+
     }
 }

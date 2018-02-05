@@ -22,5 +22,5 @@
 ./llama-submit \
 --class com.wojustme.llama.test.WordCount \
 --master 127.0.0.1:9527 \
---tolology wordcount \
+--topology wordcount \
 --jar wc.jar

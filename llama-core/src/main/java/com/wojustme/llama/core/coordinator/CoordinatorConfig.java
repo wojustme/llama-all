@@ -23,11 +23,6 @@ public class CoordinatorConfig {
      */
     private ZkConfig zkConfig;
 
-    /**
-     * 事件统一处理器
-     */
-    private CoordinatorEventHandler coordinatorEventHandler;
-
     public int getHttpServerPort() {
         return httpServerPort;
     }
@@ -52,11 +47,4 @@ public class CoordinatorConfig {
         this.zkConfig = zkConfig;
     }
 
-    public CoordinatorEventHandler getCoordinatorEventHandler() {
-        return coordinatorEventHandler;
-    }
-
-    public void setCoordinatorEventHandler(CoordinatorEventHandler coordinatorEventHandler) {
-        this.coordinatorEventHandler = coordinatorEventHandler;
-    }
 }

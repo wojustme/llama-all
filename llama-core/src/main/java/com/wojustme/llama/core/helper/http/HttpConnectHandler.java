@@ -1,6 +1,7 @@
 package com.wojustme.llama.core.helper.http;
 
 import com.wojustme.llama.core.coordinator.CoordinatorConfig;
+import com.wojustme.llama.core.coordinator.CoordinatorData;
 import com.wojustme.llama.core.helper.http.action.ApiRouterAction;
 import com.wojustme.llama.core.helper.http.action.ErrorRouterAction;
 import com.wojustme.llama.core.helper.http.action.RouterAction;
@@ -22,10 +23,10 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  */
 public class HttpConnectHandler extends SimpleChannelInboundHandler<HttpObject> {
 
-    private final CoordinatorConfig coordinatorConfig;
+    private final CoordinatorData coordinatorData;
 
-    public HttpConnectHandler(CoordinatorConfig coordinatorConfig) {
-        this.coordinatorConfig = coordinatorConfig;
+    public HttpConnectHandler(CoordinatorData coordinatorData) {
+        this.coordinatorData = coordinatorData;
     }
 
     /**
@@ -63,11 +64,11 @@ public class HttpConnectHandler extends SimpleChannelInboundHandler<HttpObject> 
             this.routerAction = new ErrorRouterAction();
         }
         if (uri.equalsIgnoreCase("/upload")) {
-            this.routerAction = new UploadRouterAction(coordinatorConfig, httpRequest);
+            this.routerAction = new UploadRouterAction(coordinatorData, httpRequest);
             return;
         }
         if (uri.toLowerCase().startsWith("/api")) {
-            this.routerAction = new ApiRouterAction(coordinatorConfig,httpRequest);
+            this.routerAction = new ApiRouterAction(coordinatorData,httpRequest);
             return;
         }
         this.routerAction = new ErrorRouterAction();

@@ -8,6 +8,7 @@ import com.wojustme.llama.core.helper.zk.ZkConnector;
 import com.wojustme.llama.core.util.YamlUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.zookeeper.CreateMode;
+import org.greenrobot.eventbus.EventBus;
 
 /**
  * 协调者：任务调度
@@ -18,35 +19,30 @@ import org.apache.zookeeper.CreateMode;
 public class Coordinator {
 
     /**
-     * 维护zk连接器
-     */
-    private ZkConnector zkConnector;
-
-    /**
-     * 需要上报zk，协调者的状态
-     */
-    private CoordinatorStatus coordinatorStatus;
-
-    /**
      * 协调者的配置信息
      */
-    private CoordinatorConfig coordinatorConfig;
+    private CoordinatorData coordinatorData;
 
     public Coordinator(CoordinatorConfig coordinatorConfig) {
-        this.coordinatorConfig = coordinatorConfig;
-        this.zkConnector = new ZkConnector(coordinatorConfig.getZkConfig());
+
+        this.coordinatorData = coordinatorData.buildCoordinatorData(coordinatorConfig);
     }
 
     public void start() {
         // todo xurenhe 未做校验
+        prepare();
         init();
+    }
+
+    private void prepare() {
     }
 
     /**
      * coordinator进程启动
      */
     private void init() {
-        coordinatorConfig.setCoordinatorEventHandler(new CoordinatorEventHandler());
+        // 注册事件分发器
+        EventBus.getDefault().register(CoordinatorEventDispatch.getInstance());
         // 1. 创建nodes永久节点，存在跳过
         createPathNodes();
         // 2. 创建coordinator临时节点, 并写入数据
@@ -62,32 +58,34 @@ public class Coordinator {
     }
 
     private void createPathNodes() {
+        ZkConnector zkConnector = coordinatorData.getZkConnector();
         zkConnector.createNode(ZkPathConstant.NODES_PATH, StringUtils.EMPTY, CreateMode.PERSISTENT, true);
     }
 
     private void createPathCoordinator() {
+        ZkConnector zkConnector = coordinatorData.getZkConnector();
+        CoordinatorStatus coordinatorStatus = coordinatorData.getCoordinatorStatus();
         zkConnector.createNode(ZkPathConstant.COORDINATOR_PATH, coordinatorStatus, CreateMode.EPHEMERAL);
     }
 
     private void createPathWorkers() {
+        ZkConnector zkConnector = coordinatorData.getZkConnector();
         zkConnector.createNode(ZkPathConstant.WORKERS_PATH, StringUtils.EMPTY, CreateMode.PERSISTENT, true);
     }
 
     private void createPathTopologies() {
+        ZkConnector zkConnector = coordinatorData.getZkConnector();
         zkConnector.createNode(ZkPathConstant.TOPOLOGIES_PATH, StringUtils.EMPTY, CreateMode.PERSISTENT, true);
     }
 
     private void createPathAssignments() {
+        ZkConnector zkConnector = coordinatorData.getZkConnector();
         zkConnector.createNode(ZkPathConstant.ASSIGNMENTS_PATH, StringUtils.EMPTY, CreateMode.PERSISTENT, true);
     }
 
     private void createTopologyHttpServer() {
-        HttpConnectServer httpConnectServer = new HttpConnectServer(coordinatorConfig);
+        HttpConnectServer httpConnectServer = new HttpConnectServer(coordinatorData);
         new Thread(httpConnectServer).start();
-    }
-
-    public ZkConnector getZkConnector() {
-        return zkConnector;
     }
 
 
