@@ -8,7 +8,7 @@ import org.greenrobot.eventbus.Subscribe;
  */
 public class CoordinatorEventDispatch {
 
-    private static CoordinatorEventDispatch instance;
+    private static volatile CoordinatorEventDispatch instance;
 
     private CoordinatorEventDispatch() {
     }

@@ -1,5 +1,6 @@
 package com.wojustme.llama.core.net;
 
+import com.wojustme.llama.core.bean.NetAddress;
 import com.wojustme.llama.core.exception.SerializerException;
 import com.wojustme.llama.core.helper.net.handler.MsgClientServerHandler;
 import com.wojustme.llama.core.helper.net.handler.MsgServerHandler;
@@ -9,7 +10,6 @@ import com.wojustme.llama.core.helper.net.msg.MsgCoder;
 import com.wojustme.llama.core.helper.net.msg.MsgType;
 import com.wojustme.llama.core.helper.net.MsgClient;
 import com.wojustme.llama.core.helper.net.MsgServer;
-import com.wojustme.llama.core.bean.NetAddress;
 import com.wojustme.llama.core.helper.serializer.HessianSerializer;
 import com.wojustme.llama.core.helper.serializer.LlamaSerializer;
 import io.netty.channel.ChannelHandlerContext;
@@ -51,9 +51,7 @@ public class NetTest {
     public void test_startClient() throws Exception {
         String host = "127.0.0.1";
         int port = 9527;
-        NetAddress netAddress = new NetAddress();
-        netAddress.setHost(host);
-        netAddress.setPort(port);
+        NetAddress netAddress = new NetAddress(host, port);
         MsgClientServerHandler<MsgBean> msgClientHandler = new MsgClientServerHandler<MsgBean>() {
             @Override
             public void sendInitMsg(ChannelHandlerContext ctx) {

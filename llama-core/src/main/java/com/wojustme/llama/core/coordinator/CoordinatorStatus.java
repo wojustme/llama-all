@@ -1,7 +1,5 @@
 package com.wojustme.llama.core.coordinator;
 
-import com.wojustme.llama.core.bean.NetAddress;
-
 /**
  * 调度器状态
  * @author xurenhe

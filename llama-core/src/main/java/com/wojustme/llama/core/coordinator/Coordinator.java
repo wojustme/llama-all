@@ -25,7 +25,7 @@ public class Coordinator {
 
     public Coordinator(CoordinatorConfig coordinatorConfig) {
 
-        this.coordinatorData = coordinatorData.buildCoordinatorData(coordinatorConfig);
+        this.coordinatorData = CoordinatorData.buildCoordinatorData(coordinatorConfig);
     }
 
     public void start() {

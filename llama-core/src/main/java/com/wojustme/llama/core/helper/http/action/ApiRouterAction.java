@@ -1,15 +1,12 @@
 package com.wojustme.llama.core.helper.http.action;
 
-import com.wojustme.llama.core.coordinator.CoordinatorConfig;
 import com.wojustme.llama.core.coordinator.CoordinatorData;
-import com.wojustme.llama.core.coordinator.CoordinatorEventDispatch;
 import com.wojustme.llama.core.helper.http.HttpUtils;
 import com.wojustme.llama.core.helper.http.bean.ResponseContentTypeEnum;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpContent;
 import io.netty.handler.codec.http.HttpRequest;
-import org.greenrobot.eventbus.EventBus;
 
 import java.util.HashMap;
 import java.util.Map;

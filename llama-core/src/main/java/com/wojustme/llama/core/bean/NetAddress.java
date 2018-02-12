@@ -1,52 +1,29 @@
 package com.wojustme.llama.core.bean;
 
-import com.google.common.base.Objects;
-
 /**
- * 网络地址
  * @author xurenhe
- * @date 2017/12/29
+ * @date 2018/2/10
  */
 public class NetAddress {
-
     /**
-     * 地址
+     * ip或者host名
      */
-    private String host;
-
+    private final String host;
     /**
      * 端口
      */
-    private int port;
+    private final int port;
 
+    public NetAddress(String host, int port) {
+        this.host = host;
+        this.port = port;
+    }
 
     public String getHost() {
         return host;
     }
 
-    public void setHost(String host) {
-        this.host = host;
-    }
-
     public int getPort() {
         return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        NetAddress that = (NetAddress) o;
-        return port == that.port &&
-                Objects.equal(host, that.host);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(host, port);
     }
 }
