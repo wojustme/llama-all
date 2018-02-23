@@ -23,4 +23,5 @@ public interface MsgHandler<T> {
      */
     void handleError(ChannelHandlerContext ctx, Throwable cause);
 
+    ChannelHandlerContext getChannelHandlerContext();
 }

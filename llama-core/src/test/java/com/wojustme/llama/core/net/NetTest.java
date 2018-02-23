@@ -41,6 +41,11 @@ public class NetTest {
             public void handleError(ChannelHandlerContext ctx, Throwable cause) {
 
             }
+
+            @Override
+            public ChannelHandlerContext getChannelHandlerContext() {
+                return null;
+            }
         };
         MsgCoder<MsgBean> msgBeanMsgCoder = new MsgBeanCoder();
         MsgServer msgServer = new MsgServer(port, msgServerHandler, msgBeanMsgCoder);
@@ -72,6 +77,16 @@ public class NetTest {
             @Override
             public void handleError(ChannelHandlerContext ctx, Throwable cause) {
 
+            }
+
+            @Override
+            public void sendMsg(ChannelHandlerContext ctx, MsgBean data) {
+
+            }
+
+            @Override
+            public ChannelHandlerContext getChannelHandlerContext() {
+                return null;
             }
         };
 

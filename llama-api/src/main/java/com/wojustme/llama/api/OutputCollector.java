@@ -5,4 +5,6 @@ package com.wojustme.llama.api;
  * @date 2018/2/12
  */
 public interface OutputCollector {
+
+    void emit(Tuple tuple);
 }

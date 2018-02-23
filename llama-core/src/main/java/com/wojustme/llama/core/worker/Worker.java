@@ -12,6 +12,7 @@ import com.wojustme.llama.core.util.YamlUtils;
 import com.wojustme.llama.core.worker.conf.WorkerConfig;
 import com.wojustme.llama.core.worker.event.WorkerEvent;
 import com.wojustme.llama.core.worker.event.WorkerEventData;
+import com.wojustme.llama.core.worker.net.NetDataBean;
 import org.apache.zookeeper.CreateMode;
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
@@ -80,6 +81,7 @@ public class Worker {
         WorkerEvent workerEvent = workerEventData.getWorkerEvent();
         if (workerEvent == WorkerEvent.REVC_DATA) {
             WorkerExecutorManager workerExecutorManager = workerData.getWorkerExecutorManager();
+            workerExecutorManager.receiveData((NetDataBean) workerEventData.getMsg());
         }
     }
 

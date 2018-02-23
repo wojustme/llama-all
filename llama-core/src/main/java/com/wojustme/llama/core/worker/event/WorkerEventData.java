@@ -1,6 +1,5 @@
 package com.wojustme.llama.core.worker.event;
 
-import com.wojustme.llama.core.coordinator.CoordinatorEvent;
 
 /**
  * @author xurenhe

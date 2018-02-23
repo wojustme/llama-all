@@ -5,7 +5,7 @@ package com.wojustme.llama.core.worker.net;
  * @author xurenhe
  * @date 2018/2/12
  */
-public class NetRecvDataBean {
+public class NetDataBean {
     /**
      * 任务名
      */
@@ -15,7 +15,7 @@ public class NetRecvDataBean {
      */
     private byte[] transferData;
 
-    public NetRecvDataBean(String taskName, byte[] transferData) {
+    public NetDataBean(String taskName, byte[] transferData) {
         this.taskName = taskName;
         this.transferData = transferData;
     }

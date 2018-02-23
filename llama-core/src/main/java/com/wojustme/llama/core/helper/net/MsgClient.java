@@ -4,6 +4,7 @@ import com.wojustme.llama.core.bean.NetAddress;
 import com.wojustme.llama.core.exception.NetException;
 import com.wojustme.llama.core.helper.net.handler.channel.MsgClientChannelHandler;
 import com.wojustme.llama.core.helper.net.handler.MsgClientServerHandler;
+import com.wojustme.llama.core.helper.net.msg.MsgBean;
 import com.wojustme.llama.core.helper.net.msg.MsgCoder;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.*;
@@ -76,6 +77,12 @@ public class MsgClient {
         } finally {
             group.shutdownGracefully();
         }
+    }
+
+
+    public void sendMsg(MsgBean msgBean) {
+        ChannelHandlerContext channelHandlerContext = msgClientHandler.getChannelHandlerContext();
+        channelHandlerContext.writeAndFlush(msgBean);
     }
 
     private boolean validate() {

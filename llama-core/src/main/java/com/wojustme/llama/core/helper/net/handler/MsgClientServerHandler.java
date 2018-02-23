@@ -1,5 +1,6 @@
 package com.wojustme.llama.core.helper.net.handler;
 
+import com.wojustme.llama.core.helper.net.msg.MsgBean;
 import io.netty.channel.ChannelHandlerContext;
 
 /**
@@ -14,4 +15,6 @@ public interface MsgClientServerHandler<T> extends MsgServerHandler<T> {
      * @param ctx
      */
     void sendInitMsg(ChannelHandlerContext ctx);
+
+    void sendMsg(ChannelHandlerContext ctx, MsgBean data);
 }

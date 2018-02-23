@@ -13,6 +13,7 @@ import com.wojustme.llama.core.helper.zk.ZkConnector;
 import com.wojustme.llama.core.worker.conf.WorkerConfig;
 import com.wojustme.llama.core.worker.event.WorkerEvent;
 import com.wojustme.llama.core.worker.event.WorkerEventData;
+import com.wojustme.llama.core.worker.net.NetDataBean;
 import io.netty.channel.ChannelHandlerContext;
 import org.greenrobot.eventbus.EventBus;
 
@@ -71,7 +72,7 @@ public class WorkerData {
                 MsgType msgType = msgBean.getMsgType();
                 if (msgType == MsgType.SEND_DATA) {
                     try {
-                        String data = netSerializer.deserialize(msgBean.getMsgData(), String.class);
+                        NetDataBean data = netSerializer.deserialize(msgBean.getMsgData(), NetDataBean.class);
                         EventBus.getDefault().post(new WorkerEventData(WorkerEvent.REVC_DATA, data));
                     } catch (SerializerException e) {
                         e.printStackTrace();
@@ -83,6 +84,11 @@ public class WorkerData {
             @Override
             public void handleError(ChannelHandlerContext ctx, Throwable cause) {
 
+            }
+
+            @Override
+            public ChannelHandlerContext getChannelHandlerContext() {
+                return null;
             }
         };
     }

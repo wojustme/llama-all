@@ -1,6 +1,6 @@
 package com.wojustme.llama.core.worker;
 
-import com.wojustme.llama.core.worker.net.NetRecvDataBean;
+import com.wojustme.llama.core.worker.net.NetDataBean;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,14 +39,18 @@ public class WorkerExecutorManager {
 
     }
 
-    public void receiveData(NetRecvDataBean netRecvDataBean) {
-        String taskName = netRecvDataBean.getTaskName();
+    /**
+     * 收到网络数据，进行数据分发到任务中
+     * @param netDataBean
+     */
+    public void receiveData(NetDataBean netDataBean) {
+        String taskName = netDataBean.getTaskName();
         BoltExecutor boltExecutor = runBoltTaskMap.get(taskName);
         if (boltExecutor != null) {
             BlockingQueue<TaskTransferData> taskDataQueue = boltExecutor.getTaskDataQueue();
             TaskTransferData taskTransferData = new TaskTransferData();
             taskTransferData.setTaskName(taskName);
-            taskTransferData.setData(netRecvDataBean.getTransferData());
+            taskTransferData.setData(netDataBean.getTransferData());
             taskDataQueue.add(taskTransferData);
         }
     }
